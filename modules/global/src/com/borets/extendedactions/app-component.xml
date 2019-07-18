@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<app-component xmlns="http://schemas.haulmont.com/cuba/app-component.xsd"
+               dependsOn="com.haulmont.cuba">
+
+    <module name="global" blocks="*">
+        <artifact name="ext-act-global" appJar="true"/>
+
+        <property name="cuba.metadataConfig" value="+com/borets/extendedactions/metadata.xml"/>
+        <property name="cuba.viewsConfig" value="+com/borets/extendedactions/views.xml"/>
+    </module>
+    <module name="web" dependsOn="global" blocks="web">
+        <artifact name="ext-act-web" appJar="true"/>
+        <artifact name="ext-act-web" classifier="web" ext="zip" configuration="webcontent"/>
+
+        <property name="cuba.springContextConfig" value="+com/borets/extendedactions/web-spring.xml"/>
+        <property name="cuba.dispatcherSpringContextConfig"
+                  value="+com/borets/extendedactions/web-dispatcher-spring.xml"/>
+        <property name="cuba.windowConfig" value="+com/borets/extendedactions/web-screens.xml"/>
+        <property name="cuba.menuConfig" value="+com/borets/extendedactions/web-menu.xml"/>
+        <property name="cuba.permissionConfig" value="+com/borets/extendedactions/web-permissions.xml"/>
+        <property name="cuba.mainMessagePack" value="+com.borets.extendedactions.web"/>
+    </module>
+</app-component>

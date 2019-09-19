@@ -1,6 +1,6 @@
 
 buildscript {
-    ext.cubaVersion = '7.0.8'
+    ext.cubaVersion = '7.1.0'
     repositories {
         maven {
             url 'http://pk-sp-git1.pk.borets.gc:8081/repository/cuba-group/'

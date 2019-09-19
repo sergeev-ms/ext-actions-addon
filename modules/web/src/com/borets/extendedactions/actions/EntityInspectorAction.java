@@ -6,6 +6,7 @@ import com.haulmont.cuba.core.global.AppBeans;
 import com.haulmont.cuba.core.global.Messages;
 import com.haulmont.cuba.core.global.UserSessionSource;
 import com.haulmont.cuba.gui.WindowManager;
+import com.haulmont.cuba.gui.app.core.entityinspector.EntityInspectorEditor;
 import com.haulmont.cuba.gui.components.AbstractWindow;
 import com.haulmont.cuba.gui.components.ActionType;
 import com.haulmont.cuba.gui.components.Component;
@@ -65,14 +66,12 @@ public class EntityInspectorAction extends ItemTrackingAction {
                 window.addAfterCloseListener(afterCloseEvent -> {
                     if (isCommitCloseAction(afterCloseEvent.getCloseAction())) {
                         //refresh item changes. look at EditorBuilderProcessor.java as example
-                        //fixme: is`t enough.
                         @SuppressWarnings("unchecked")
                         final CollectionContainer<Entity> container = ((ContainerDataUnit) getTarget().getItems()).getContainer();
-                        container.replaceItem(selected);
+                        container.replaceItem(((EntityInspectorEditor) window).getItem());
                     }
                 });
             }
-
         }
     }
 

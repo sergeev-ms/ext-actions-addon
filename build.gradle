@@ -27,7 +27,7 @@ apply(plugin: 'cuba')
 cuba {
     artifact {
         group = 'com.borets.extendedactions'
-        version = '0.1'
+        version = '0.2'
         isSnapshot = false
     }
     tomcat {

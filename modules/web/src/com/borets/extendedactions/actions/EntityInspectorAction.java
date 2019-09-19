@@ -21,17 +21,17 @@ import com.haulmont.cuba.security.entity.RoleType;
 
 import javax.inject.Inject;
 
-@ActionType(OpenInEntityInspector.ID)
-public class OpenInEntityInspector extends ItemTrackingAction {
+@ActionType(EntityInspectorAction.ID)
+public class EntityInspectorAction extends ItemTrackingAction {
     public static final String ID = "openInEntityInspector";
     private boolean isAdmin;
 
 
-    public OpenInEntityInspector() {
+    public EntityInspectorAction() {
         this(ID);
     }
 
-    public OpenInEntityInspector(String id) {
+    public EntityInspectorAction(String id) {
         super(id);
         final UserSessionSource uss = AppBeans.get(UserSessionSource.NAME);
         this.isAdmin = uss.getUserSession().getUser().getUserRoles().stream().anyMatch(userRole -> userRole.getRole().getType().equals(RoleType.SUPER));
@@ -39,7 +39,7 @@ public class OpenInEntityInspector extends ItemTrackingAction {
 
     @Inject
     protected void setMessages(Messages messages) {
-        this.caption = messages.getMainMessage("actions.showInEntityInspector");
+        this.caption = messages.getMainMessage("entityInspectorActions.showInEntityInspector");
     }
 
     @Override
@@ -66,7 +66,8 @@ public class OpenInEntityInspector extends ItemTrackingAction {
                     if (isCommitCloseAction(afterCloseEvent.getCloseAction())) {
                         //refresh item changes. look at EditorBuilderProcessor.java as example
                         //fixme: is`t enough.
-                        final CollectionContainer container = ((ContainerDataUnit) getTarget().getItems()).getContainer();
+                        @SuppressWarnings("unchecked")
+                        final CollectionContainer<Entity> container = ((ContainerDataUnit) getTarget().getItems()).getContainer();
                         container.replaceItem(selected);
                     }
                 });

@@ -3,12 +3,9 @@ buildscript {
     ext.cubaVersion = '7.2.1'
     repositories {
         maven {
-            url 'http://pk-sp-git1.pk.borets.gc:8081/repository/cuba-group/'
-            credentials {
-                username(rootProject.hasProperty('repoUser') ? rootProject['repoUser'] : 'sergeevms')
-                password(rootProject.hasProperty('repoPass') ? rootProject['repoPass'] : 'uTJQ2k1y')
-            }
+            url 'https://dl.bintray.com/cuba-platform/main'
         }
+        jcenter()
     }
     dependencies {
         classpath "com.haulmont.gradle:cuba-plugin:$cubaVersion"

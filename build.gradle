@@ -1,6 +1,6 @@
 
 buildscript {
-    ext.cubaVersion = '7.1.0'
+    ext.cubaVersion = '7.2.1'
     repositories {
         maven {
             url 'http://pk-sp-git1.pk.borets.gc:8081/repository/cuba-group/'
@@ -27,7 +27,7 @@ apply(plugin: 'cuba')
 cuba {
     artifact {
         group = 'com.borets.extendedactions'
-        version = '0.2'
+        version = '0.3'
         isSnapshot = false
     }
     tomcat {
@@ -35,9 +35,9 @@ cuba {
     }
 
     uploadRepository {
-        url = uploadRepoUrl
-        user=uploadRepoUsername
-        password=uploadRepoPassword
+        url = uri("https://maven.pkg.github.com/sergeev-ms/ext-actions-addon")
+        user=project.findProperty("github.user") ?: System.getenv("GITHUB_USER")
+        password=project.findProperty("github.key") ?: System.getenv("GITHUB_TOKEN")
     }
 }
 
@@ -112,7 +112,7 @@ configure(webModule) {
     task deployConf(type: Copy) {
         from file('src')
         include "com/borets/extendedactions/**"
-        into "$cuba.tomcat.dir/conf/${modulePrefix}"
+        into "$cuba.appHome/${modulePrefix}/conf"
     }
 
     task clearMessagesCache(type: CubaClearMessagesCache) {
@@ -120,15 +120,8 @@ configure(webModule) {
     }
     deployConf.dependsOn clearMessagesCache
 
-    task cleanConf(description: 'Cleans up conf directory') {
-        doLast {
-            def dir = new File(cuba.tomcat.dir, "/conf/${modulePrefix}")
-            if (dir.isDirectory()) {
-                ant.delete(includeemptydirs: true) {
-                    fileset(dir: dir, includes: '**/*', excludes: 'local.app.properties')
-                }
-            }
-        }
+    task cleanConf(description: 'Cleans up conf directory', type: Delete) {
+        delete "$cuba.appHome/${modulePrefix}/conf"
     }
 
     task deploy(dependsOn: [assemble, cleanConf], type: CubaDeployment) {
@@ -150,7 +143,7 @@ task restart(dependsOn: ['stop', ":${modulePrefix}-web:deploy"], description: 'R
                 socket(server: 'localhost', port: '8787')
             }
         }
-        start.execute()
     }
 }
+restart.finalizedBy start
 

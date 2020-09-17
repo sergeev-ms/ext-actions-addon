@@ -18,14 +18,18 @@ import com.haulmont.cuba.gui.screen.CloseAction;
 import com.haulmont.cuba.gui.screen.FrameOwner;
 import com.haulmont.cuba.gui.screen.StandardCloseAction;
 import com.haulmont.cuba.gui.screen.StandardLookup;
+import com.haulmont.cuba.security.entity.Access;
 import com.haulmont.cuba.security.entity.RoleType;
+import com.haulmont.cuba.security.entity.UserRole;
+import com.haulmont.cuba.security.global.UserSession;
 
 import javax.inject.Inject;
+import java.util.List;
 
 @ActionType(EntityInspectorAction.ID)
 public class EntityInspectorAction extends ItemTrackingAction {
     public static final String ID = "openInEntityInspector";
-    private boolean isAdmin;
+    private final boolean isAdmin;
 
 
     public EntityInspectorAction() {
@@ -35,7 +39,8 @@ public class EntityInspectorAction extends ItemTrackingAction {
     public EntityInspectorAction(String id) {
         super(id);
         final UserSessionSource uss = AppBeans.get(UserSessionSource.NAME);
-        this.isAdmin = uss.getUserSession().getUser().getUserRoles().stream().anyMatch(userRole -> userRole.getRole().getType().equals(RoleType.SUPER));
+        final UserSession userSession = uss.getUserSession();
+        isAdmin = isSuperUser(userSession);
     }
 
     @Inject
@@ -72,6 +77,20 @@ public class EntityInspectorAction extends ItemTrackingAction {
                     }
                 });
             }
+        }
+    }
+
+    private boolean isSuperUser(UserSession userSession) {
+        final Access policy = userSession.getPermissionUndefinedAccessPolicy();
+        final List<UserRole> userRoles = userSession.getUser().getUserRoles();
+        if (Access.ALLOW.equals(policy)) {
+            return userRoles.stream()
+                    .map(userRole -> userRole.getRole().getType())
+                    .anyMatch(RoleType.SUPER::equals);
+        } else {
+            return userRoles.stream()
+                    .map(UserRole::getRoleName)
+                    .anyMatch("system-full-access"::equals);
         }
     }
 

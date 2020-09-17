@@ -3,11 +3,7 @@ buildscript {
     ext.cubaVersion = '7.2.7'
     repositories {
         maven {
-            url 'http://pk-sp-git1.pk.borets.gc:8081/repository/cuba-group/'
-            credentials {
-                username(rootProject.hasProperty('repoUser') ? rootProject['repoUser'] : 'sergeevms')
-                password(rootProject.hasProperty('repoPass') ? rootProject['repoPass'] : 'uTJQ2k1y')
-            }
+            url 'https://dl.bintray.com/cuba-platform/main'
         }
     }
     dependencies {
@@ -35,9 +31,9 @@ cuba {
     }
 
     uploadRepository {
-        url = uploadRepoUrl
-        user=uploadRepoUsername
-        password=uploadRepoPassword
+        url = uri("https://maven.pkg.github.com/sergeev-ms/ext-actions-addon")
+        user=project.findProperty("github.user") ?: System.getenv("GITHUB_USER")
+        password=project.findProperty("github.key") ?: System.getenv("GITHUB_TOKEN")
     }
 }
 

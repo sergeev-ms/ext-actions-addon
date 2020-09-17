@@ -26,9 +26,6 @@ cuba {
         version = '0.3.1'
         isSnapshot = false
     }
-    tomcat {
-        dir = "$project.rootDir/deploy/tomcat"
-    }
 
     uploadRepository {
         url = uri("https://maven.pkg.github.com/sergeev-ms/ext-actions-addon")
@@ -108,7 +105,7 @@ configure(webModule) {
     task deployConf(type: Copy) {
         from file('src')
         include "com/borets/extendedactions/**"
-        into "$cuba.tomcat.dir/conf/${modulePrefix}"
+        into "$cuba.appHome/${modulePrefix}/conf"
     }
 
     task clearMessagesCache(type: CubaClearMessagesCache) {
@@ -116,15 +113,8 @@ configure(webModule) {
     }
     deployConf.dependsOn clearMessagesCache
 
-    task cleanConf(description: 'Cleans up conf directory') {
-        doLast {
-            def dir = new File(cuba.tomcat.dir, "/conf/${modulePrefix}")
-            if (dir.isDirectory()) {
-                ant.delete(includeemptydirs: true) {
-                    fileset(dir: dir, includes: '**/*', excludes: 'local.app.properties')
-                }
-            }
-        }
+    task cleanConf(description: 'Cleans up conf directory', type: Delete) {
+        delete "$cuba.appHome/${modulePrefix}/conf"
     }
 
     task deploy(dependsOn: [assemble, cleanConf], type: CubaDeployment) {
